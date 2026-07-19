@@ -37,7 +37,11 @@ export default function App() {
   const muni = munis?.find((m) => m.id === muniId) ?? null;
   const district =
     muni?.zoning_districts.find((d) => d.id === districtId) ?? null;
-  const costModel = muni?.build_cost_models?.[0] ?? null;
+  // PostgREST returns the one-to-one build_cost_models embed as a bare object
+  // (unique municipality_id), but as an array on databases where it can't
+  // detect the constraint — accept both.
+  const raw = muni?.build_cost_models;
+  const costModel = (Array.isArray(raw) ? raw[0] : raw) ?? null;
 
   const result = useMemo(
     () =>

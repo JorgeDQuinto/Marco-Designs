@@ -17,6 +17,19 @@ ALTER TABLE build_cost_models ENABLE ROW LEVEL SECURITY;
 ALTER TABLE build_cost_tiers  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE parcels           ENABLE ROW LEVEL SECURITY;
 
+-- Supabase's API roles need explicit SELECT grants when tables are created
+-- by a role other than `postgres` (e.g. via the management API). Guarded so
+-- the migration still runs on plain Postgres in CI, where these roles don't
+-- exist. RLS above is what keeps the API read-only; the grant is just the
+-- door RLS then filters.
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+        GRANT USAGE ON SCHEMA public TO anon, authenticated;
+        GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+    END IF;
+END $$;
+
 DO $$
 DECLARE
     t text;

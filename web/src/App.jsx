@@ -12,6 +12,7 @@ import {
 } from "./lib/envelope.js";
 import ParcelSearch from "./components/ParcelSearch.jsx";
 import ParcelPlan from "./components/ParcelPlan.jsx";
+import Logo from "./components/Logo.jsx";
 
 const TIER_LABELS = {
   builder_grade: "Builder grade",
@@ -221,22 +222,25 @@ export default function App() {
 
   if (!supabase) {
     return (
-      <main className="shell">
-        <Brand />
-        <div className="card setup-card">
+      <>
+        <TopNav />
+        <main className="shell">
+          <div className="card setup-card">
           <p>
             Supabase is not configured. Copy <code>web/.env.example</code> to{" "}
             <code>web/.env</code>, fill in <code>VITE_SUPABASE_URL</code> and{" "}
             <code>VITE_SUPABASE_ANON_KEY</code>, then restart <code>npm run dev</code>.
-          </p>
-        </div>
-      </main>
+            </p>
+          </div>
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="shell">
-      <Brand />
+    <>
+      <TopNav />
+      <main className="shell">
       <Stepper step={step} maxStepReached={maxStepReached} onStep={goToStep} />
 
       {error && <div className="card error">Failed to load data: {error}</div>}
@@ -309,18 +313,27 @@ export default function App() {
           onBack={() => goToStep(2)}
         />
       )}
-    </main>
+      </main>
+    </>
+  );
+}
+
+function TopNav() {
+  return (
+    <nav className="top-nav">
+      <div className="top-nav-inner">
+        <Logo className="nav-logo" />
+        <span className="nav-tagline">Buildable potential &amp; preliminary cost planning</span>
+      </div>
+    </nav>
   );
 }
 
 function Brand() {
   return (
     <header className="brand">
-      <div className="brand-mark">D</div>
-      <div>
-        <h1>Demarco</h1>
-        <p>Buildable potential &amp; preliminary cost planning</p>
-      </div>
+      <Logo className="brand-logo" />
+      <p>Buildable potential &amp; preliminary cost planning</p>
     </header>
   );
 }
